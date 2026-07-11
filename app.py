@@ -31,7 +31,6 @@ CORS(app, origins=["http://localhost:3000", "http://localhost:5173"])
 predictor = ParkingPredictor()
 predictor.train_initial()          # ← ajouter
 llm = LLMService()
-_refresh_prediction()              # ← ajouter
 
 # État courant (in-memory cache)
 current_state = {
