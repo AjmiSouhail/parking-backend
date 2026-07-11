@@ -1,7 +1,7 @@
 flask==3.0.3
 flask-cors==4.0.1
-pymongo==4.7.3
-scikit-learn==1.5.0
+scikit-learn==1.5.2
 numpy==1.26.4
-anthropic==0.28.0
+groq==0.9.0
 python-dotenv==1.0.1
+gunicorn==22.0.0
