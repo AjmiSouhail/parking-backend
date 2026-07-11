@@ -121,6 +121,29 @@ def simulate_sensor():
 @app.route("/api/parking/state", methods=["GET"])
 def get_parking_state():
     """Retourne l'état complet du parking."""
+    # Forcer une mise à jour simulée à chaque requête
+    import random
+    from datetime import datetime as dt
+    hour = dt.now().hour
+    if 8 <= hour <= 10 or 12 <= hour <= 14 or 17 <= hour <= 19:
+        base_prob = 0.75
+    elif 0 <= hour <= 6:
+        base_prob = 0.1
+    else:
+        base_prob = 0.3
+
+    with state_lock:
+        for sid in ["P1", "P2", "P3", "P4"]:
+            occupied = random.random() < base_prob
+            current_state["spots"][sid].update({
+                "occupied":    occupied,
+                "distance":    round(random.uniform(3, 10), 1) if occupied else round(random.uniform(150, 250), 1),
+                "last_update": dt.utcnow().isoformat(),
+            })
+        current_state["last_sensor_update"] = dt.utcnow().isoformat()
+
+    _refresh_prediction()
+
     with state_lock:
         spots      = current_state["spots"]
         prediction = current_state["prediction"]
@@ -140,7 +163,7 @@ def get_parking_state():
         },
         "prediction":         prediction,
         "last_update":        current_state["last_sensor_update"],
-        "timestamp":          datetime.utcnow().isoformat(),
+        "timestamp":          dt.utcnow().isoformat(),
     })
 
 
